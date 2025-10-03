@@ -1,26 +1,21 @@
-#!/usr/bin/env python3
-
-from random import choice as rc
-
-from faker import Faker
+# server/seed.py
 
 from app import app
 from models import db, Movie
 
-fake = Faker()
+with app.app_context():
+    # Reset the database
+    db.drop_all()
+    db.create_all()
 
-def make_movies():
-
-    Movie.query.delete()
-    
-    movies = []
-    for i in range(50):
-        m = Movie(title=fake.sentence(nb_words=4).title())
-        movies.append(m)
+    # Add some movies
+    movies = [
+        Movie(title="Inception", year=2010),
+        Movie(title="The Dark Knight", year=2008),
+        Movie(title="Interstellar", year=2014),
+    ]
 
     db.session.add_all(movies)
     db.session.commit()
 
-if __name__ == '__main__':
-    with app.app_context():
-        make_movies()
+    print("✅ Database seeded with movies!")
